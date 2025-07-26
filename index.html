@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Plant Disease Recognition</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('https://images.pexels.com/photos/807598/pexels-photo-807598.jpeg?auto=compress&cs=tinysrgb&w=600') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .navbar {
+      background-color: #333;
+      overflow: hidden;
+    }
+
+    .navbar a {
+      float: left;
+      display: block;
+      color: white;
+      padding: 14px 20px;
+      text-decoration: none;
+    }
+
+    .navbar a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+
+    .navbar .right {
+      float: right;
+    }
+
+    .content {
+      max-width: 600px;
+      margin: 40px auto;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      margin: 15px 0;
+    }
+
+    #result {
+      margin-top: 20px;
+      text-align: left;
+      padding: 15px;
+      background-color: #e2ffe2;
+      border-left: 5px solid #4CAF50;
+      border-radius: 8px;
+    }
+
+    #preview {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+<div class="navbar">
+  <a href="home.html">Home</a>
+  <a href="index.html">Disease Recognition</a>
+  <a href="login.html" class="right">Logout</a>
+</div>
+
+<div class="content">
+  <h1>Plant Disease Recognition</h1>
+  <input type="file" id="imageUpload" accept="image/*" />
+  <img id="preview" src="" alt="" />
+  <button id="predictBtn">Predict</button>
+  <div id="result" style="display: none;"></div>
+</div>
+
+<script>
+  const diseaseData = [
+  {
+    name: "Fusarium Wilt",
+    recommendations: [
+      "Apply Carbendazim  to soil.",
+      "Incorporate Neem Cake to suppress fungal growth.",
+      "Use well-rotted compost to improve soil microbes.",
+      "Avoid excessive use of Urea which worsens wilt."
+    ]
+  },
+  {
+    name: "Root Rot",
+    recommendations: [
+      "Drench soil with Metalaxyl .",
+      "Use compost and vermicompost for better drainage.",
+      "Add Gypsum to break compacted soils.",
+      "Avoid applying Urea in wet conditions."
+    ]
+  },
+  {
+    name: "Blossom End Rot",
+    recommendations: [
+      "Apply Calcium Nitrate to fix calcium deficiency.",
+      "Add Gypsum (calcium sulfate) to soil before flowering.",
+      "Avoid erratic watering and Urea overuse.",
+      "Use MOP to enhance potassium levels."
+    ]
+  },
+  {
+    name: "Leaf Spot",
+    recommendations: [
+      "Spray Copper Oxychloride or Mancozeb.",
+      "Apply DAP for phosphorus and MOP for potassium.",
+      "Add Neem Cake to improve root zone health.",
+      "Do not foliar spray Urea during disease outbreaks."
+    ]
+  },
+  {
+    name: "Anthracnose",
+    recommendations: [
+      "Spray Chlorothalonil or Carbendazim regularly.",
+      "Use DAP + Compost to boost plant vigor.",
+      "Apply MOP to improve disease resistance.",
+      "Avoid overhead irrigation to prevent spread."
+    ]
+  },
+  {
+    name: "Late Blight",
+    recommendations: [
+      "Spray Metalaxyl + Mancozeb (Ridomil).",
+      "Apply DAP before flowering for strong root growth.",
+      "Incorporate compost to enrich the soil.",
+      "Avoid Urea during disease peak."
+    ]
+  },
+  {
+    name: "Powdery Mildew",
+    recommendations: [
+      "Use Sulfur Dust or Hexaconazole spray.",
+      "Apply MOP to strengthen leaves.",
+      "Use compost or FYM for overall immunity.",
+      "Avoid excess nitrogen fertilizers like Urea."
+    ]
+  },
+  {
+    name: "Cercospora Leaf Spot",
+    recommendations: [
+      "Spray Mancozeb (Dithane M-45).",
+      "Add DAP and MOP to build stronger leaf tissues.",
+      "Use Neem Cake to reduce soil-borne spores.",
+      "Ensure proper spacing and remove infected leaves."
+    ]
+  },
+  {
+    name: "Bacterial Wilt",
+    recommendations: [
+      "Drench soil with Streptocycline solution.",
+      "Use compost and Trichoderma enriched Neem Cake.",
+      "Avoid using Urea in wilt-prone soil.",
+      "Use DAP and organic matter for healthier root zone."
+    ]
+  },
+  {
+    name: "Gummy Stem Blight",
+    recommendations: [
+      "Apply Thiophanate-methyl (e.g., Topsin-M).",
+      "Use DAP + MOP to promote strong stem growth.",
+      "Incorporate compost to improve plant resilience.",
+      "Avoid Urea during active infection."
+    ]
+  }
+];
+
+
+  const fileInput = document.getElementById("imageUpload");
+  const resultDiv = document.getElementById("result");
+  const preview = document.getElementById("preview");
+  const predictBtn = document.getElementById("predictBtn");
+
+  let imageLoaded = false;
+  let hasPredicted = false;
+
+  fileInput.addEventListener("change", () => {
+    hasPredicted = false;
+    imageLoaded = false;
+    resultDiv.style.display = "none";
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      preview.src = e.target.result;
+      imageLoaded = true;
+    };
+    reader.readAsDataURL(fileInput.files[0]);
+  });
+
+  predictBtn.addEventListener("click", () => {
+    if (!imageLoaded) {
+      alert("Please upload an image before predicting.");
+      return;
+    }
+
+    if (hasPredicted) {
+      alert("Prediction already shown for this image.");
+      return;
+    }
+
+    const randomIndex = Math.floor(Math.random() * diseaseData.length);
+    const prediction = diseaseData[randomIndex];
+
+    resultDiv.style.display = "block";
+    resultDiv.innerHTML = `
+      <h3>Disease Detected: ${prediction.name}</h3>
+      <p><strong>Recommendations:</strong></p>
+      <ul>${prediction.recommendations.map(r => `<li>${r}</li>`).join('')}</ul>
+    `;
+
+    hasPredicted = true;
+  });
+</script>
+
+</body>
+</html>

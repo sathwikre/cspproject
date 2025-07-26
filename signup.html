@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Plant Disease Classification Model - Sign Up</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('https://images.pexels.com/photos/807598/pexels-photo-807598.jpeg?auto=compress&cs=tinysrgb&w=600') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        .signup-container {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        .signup-container input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .signup-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2196F3;
+            color: white;
+            cursor: pointer;
+        }
+        .signup-container button:hover {
+            background-color: #1976D2;
+        }
+        .login-link {
+            margin-top: 15px;
+            display: block;
+            font-size: 14px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .login-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h1>Create a New Account</h1>
+        <form onsubmit="signup(event)">
+            <input type="text" name="name" placeholder="Full Name" required><br>
+            <input type="email" name="email" placeholder="Email" required><br>
+            <input type="password" name="password" placeholder="Password" required><br>
+            <input type="password" name="confirmPassword" placeholder="Confirm Password" required><br>
+            <button type="submit">Sign Up</button>
+        </form>
+        <a href="login.html" class="login-link">Already have an account? Login here</a>
+    </div>
+
+    <script>
+        function signup(event) {
+            event.preventDefault();
+            // You can add form validation and data saving here
+            alert("Account created successfully!");
+            window.location.href = "login.html"; // Redirect to login page
+        }
+    </script>
+</body>
+</html>
